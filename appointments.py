@@ -13,12 +13,14 @@ ALL_BUERGERAMTS = (
     122257, 122208, 122226
 )
 
-ANMELDUNG_SERVICE_ID = 120335
+ANMELDUNG_SERVICE_ID = 120686
 
 # Without a user agent, you will get a 403
 headers = {
-    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36'
+    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) '
+                  'Chrome/60.0.3112.78 Safari/537.36'
 }
+
 
 def get_appointment_dates(buergeramt_ids=ALL_BUERGERAMTS, service_id=ANMELDUNG_SERVICE_ID):
     """
@@ -33,7 +35,8 @@ def get_appointment_dates(buergeramt_ids=ALL_BUERGERAMTS, service_id=ANMELDUNG_S
         'dienstleisterlist': ','.join(buergeramt_ids),
         'anliegen': (service_id, ),
     }
-    response = requests.get('https://service.berlin.de/terminvereinbarung/termin/tag.php', params=params, headers=headers)
+    response = requests.get('https://service.berlin.de/terminvereinbarung/termin/tag.php',
+                            params=params, headers=headers)
     soup = BeautifulSoup(response.text, 'html.parser')
 
     month_widgets = soup.find_all(class_='calendar-month-table')
@@ -58,8 +61,8 @@ def log_appointment_dates(dates):
     logging.basicConfig(filename='dates.log', format='%(message)s', level=logging.INFO)
     date_strings = [d.strftime('%Y-%m-%dT%H:%M:%S') for d in dates]
     logging.info(json.dumps({
-    	'timestamp': datetime.now().strftime('%Y-%m-%dT%H:%M:%S'),
-    	'available_dates': date_strings
+        'timestamp': datetime.now().strftime('%Y-%m-%dT%H:%M:%S'),
+        'available_dates': date_strings
     }))
 
 
